@@ -1,5 +1,5 @@
-function vowelSpot(string, index) {
-  const isVowel = string[index] === "a" || string[index] === "e" || string[index] === "i" || string[index] === "o" || string[index] === "u";
+function vowelSpot(letter) {
+  const isVowel = letter === "a" || letter === "e" || letter === "i" || letter === "o" || letter === "u";
   return isVowel;
 }
 
@@ -12,7 +12,7 @@ function vowelDifference(string) {
   let index = 0;
 
   while (index < string.length) {
-    if (vowelSpot(string, index)) {
+    if (vowelSpot(string[index])) {
       count = count + 1;
 
       if (count > 1) {
