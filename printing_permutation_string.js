@@ -1,9 +1,13 @@
-function findingPermutation(string){
-  return string;
+function findingPermutation(string, index){
+ const combination = string[index];
+ if(index === string.length - 1){
+  return combination;
+ }
+  return combination + ", " + findingPermutation(string,index + 1);
 }
 
 function permutations(string){
-  return `"", "${findingPermutation(string)}"`;
+  return `"", ${findingPermutation(string, 0)}`;
 }
 
 function resultSymbol(actualValue, expectedValue) {
@@ -24,7 +28,9 @@ function testCase(string, expectedValue) {
 }
 
 function testOfAll() {
- testCase("a", '"", "a"');
+ testCase("a", '"", a');
+ testCase("ab", '"", a, b');
+ testCase("abc", '"", a, b, c');
 }
 
 testOfAll();
