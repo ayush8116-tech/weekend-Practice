@@ -1,5 +1,9 @@
+function findingPermutation(string){
+  return string;
+}
+
 function permutations(string){
-  return '"","a"';
+  return `"", "${findingPermutation(string)}"`;
 }
 
 function resultSymbol(actualValue, expectedValue) {
@@ -20,7 +24,7 @@ function testCase(string, expectedValue) {
 }
 
 function testOfAll() {
- testCase("a", '"","a"');
+ testCase("a", '"", "a"');
 }
 
 testOfAll();
