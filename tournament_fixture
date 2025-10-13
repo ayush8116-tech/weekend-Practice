@@ -1,0 +1,185 @@
+console.clear();
+// const tournamentName = prompt("Enter the name of tournament : ");
+
+console.log("‼️ Enter the team names with comma(,) between them ‼️\n\n");
+
+const teamPrompt = prompt("Enter teams name : ");
+console.log("\n\n‼️ Enter the date in DD-MM-YYYY format ‼️\n\n");
+
+const datePrompt = prompt("Starting Date : ");
+console.clear();
+
+const teams = teamPrompt.split(",");
+
+function underLine(text) {
+  return "-".repeat(text.length);
+}
+
+function nextDateForMatches(datePrompt) {
+  function isLeap(year) {
+    if (year === 0) {
+      return false;
+    }
+
+    return year % 400 === 0 || (year % 4 === 0 && year % 100 !== 0);
+  }
+
+  function lastDayofMonth(month, year) {
+    switch (month) {
+      case 2: return isLeap(year) ? 29 : 28;
+      case 4:
+      case 6:
+      case 9:
+      case 11: return 30;
+      default: return 31;
+    }
+  }
+
+  function isDayInvalid(day, month, year) {
+    return day < 1 || day > lastDayofMonth(month, year);
+  }
+
+  function isMonthInvalid(month) {
+    return month < 1 || month > 12;
+  }
+
+  function isInvalid(day, month, year) {
+    return isDayInvalid(day, month, year) || isMonthInvalid(month);
+  }
+
+  function islastDayofYear(day, month) {
+    return day === 31 && month === 12;
+  }
+
+  function isLastDayOfMonth(day, month, year) {
+    return day === lastDayofMonth(month, year);
+  }
+
+  function format(day, month, year) {
+    const paddedDay = (day + "").padStart(2, "0");
+    const paddedMonth = (month + "").padStart(2, "0");
+    const paddedYear = (year + "").padStart(4, "0");
+
+    return `${paddedDay}-${paddedMonth}-${paddedYear}`;
+  }
+
+  function dateIncrement(day, month, year) {
+    if (isInvalid(day, month, year)) {
+      return "Invalid Date";
+    }
+
+    if (islastDayofYear(day, month, year)) {
+      return format(1, 1, year + 1);
+    }
+
+    if (isLastDayOfMonth(day, month, year)) {
+      return format(1, month + 1, year);
+    }
+
+    return format(day + 1, month, year);
+  }
+
+  function nextDate(date) {
+    const dateArray = date.split("-");
+    const day = parseInt(dateArray[0]);
+    const month = parseInt(dateArray[1]);
+    const year = parseInt(dateArray[2]);
+
+    return dateIncrement(day, month, year);
+  }
+
+  return nextDate(datePrompt);
+}
+
+function findOppositionsOfTeam1(teams) {
+  const oppositionOfTeam1 = [];
+  let index = 0;
+  while (index < teams.length) {
+    oppositionOfTeam1.push(teams[index]);
+    index++;
+  }
+
+  return oppositionOfTeam1;
+}
+
+function playingTeams(teams, team1) {
+  const schedule = [];
+  const oppositions = findOppositionsOfTeam1(teams)
+
+
+  for (let index = 0; index < oppositions.length; index++) {
+    const team2 = oppositions[index];
+
+    if (index > teams.indexOf(team1)) {
+      schedule.push(`${team1} - ${team2}`);
+    }
+  }
+
+  return schedule;
+}
+
+function sampleFixture(teams) {
+  const schedule = [];
+  for (let index = 0; index < teams.length - 1; index++) {
+    const team1 = teams[index];
+
+    schedule.push(playingTeams(teams, team1));
+  }
+
+  return schedule.join().split(",");
+}
+
+function randomScheduleWithConsecutiveRepetition() {
+  const fixture = sampleFixture(teams);
+  const singleFixture = fixture[Math.ceil(Math.random() * fixture.length - 1)];
+
+  const randomScheduleArray = [singleFixture];
+
+  for (let index = 0; index < fixture.length - 1; index++) {
+    const singleFixture = fixture[Math.ceil(Math.random() * fixture.length - 1)];
+
+    if (!randomScheduleArray.includes(singleFixture)) {
+      randomScheduleArray.push(singleFixture);
+    }
+    else {
+      index--;
+    }
+  }
+
+  return randomScheduleArray;
+}
+
+function dateScheduling() {
+  const schedule = randomScheduleWithConsecutiveRepetition();
+
+  let day = nextDateForMatches(datePrompt);
+  const fixtureWithDate = [`     Date   ||   Match`, underLine("🏆🏆 Tournament Fixture 🏆🏆")];
+
+  for (let index = 0; index < schedule.length; index++) {
+    if (index === 0) {
+      day = datePrompt;
+    }
+
+    const individualFixture = `${day}  ||  ${schedule[index]}`;
+    fixtureWithDate.push(individualFixture);
+    day = nextDateForMatches(day);
+  }
+
+  return fixtureWithDate;
+}
+
+
+const finalSchedule = dateScheduling();
+
+console.log("🏆🏆 Tournament Fixture 🏆🏆");
+console.log(underLine("🏆🏆 Tournament Fixture 🏆🏆"));
+
+
+console.log(finalSchedule.join("\n"));
+
+
+
+
+
+
+
