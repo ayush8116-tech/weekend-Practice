@@ -1,4 +1,8 @@
 console.clear();
+function underline(text) {
+  return "-".repeat(text.length);
+}
+
 function easyLevelPlayers() {
   // 1️⃣ Player Names
   return [
@@ -375,6 +379,138 @@ function easyLevel(playersIndex) {
     "no ipl team",
     "chennai super kings",
   ];
+  //
+  const age = [
+    36, // Virat Kohli
+    34, // Ben Stokes
+    32, // Pat Cummins
+    35, // Kane Williamson
+    25, // Shaheen Afridi
+    38, // Rohit Sharma
+    35, // Mitchell Starc
+    34, // Joe Root
+    32, // Hardik Pandya
+    27, // Rashid Khan
+    37, // Glenn Maxwell
+    32, // Quinton de Kock
+    31, // Babar Azam
+    31, // Jasprit Bumrah
+    38, // David Warner
+    38, // Shakib Al Hasan
+    35, // Jos Buttler
+    36, // Ravindra Jadeja
+    31, // Marnus Labuschagne
+    36, // Trent Boult
+    34, // Jason Holder
+    37, // Andre Russell
+    33, // Mohammad Rizwan
+    31, // Aiden Markram
+    30, // Kagiso Rabada
+    26, // Shubman Gill
+    36, // Steve Smith
+    31, // Liton Das
+    36, // Tim Southee
+    30, // Nicholas Pooran
+    30, // Kuldeep Yadav
+    28, // Wanindu Hasaranga
+    26, // Rachin Ravindra
+    27, // Sam Curran
+    31, // Axar Patel
+    28, // Glenn Phillips
+    33, // Kyle Mayers
+    30, // Mustafizur Rahman
+    38, // Moeen Ali
+    40, // Dinesh Karthik
+    35, // Mark Wood
+    39, // Sikandar Raza
+    34, // Dasun Shanaka
+    36, // Tamim Iqbal
+    36, // David Miller
+    40, // Mohammad Nabi
+    35, // Suryakumar Yadav
+    30, // Kusal Mendis
+    31, // haris rauf
+    28, // ruturaj Gaikwad
+  ];
+  const debutDate = [
+    "18 Aug 2008 (ODI vs Sri Lanka)",
+    "25 Aug 2011 (ODI vs Ireland)",
+    "13 Oct 2011 (T20I vs South Africa)",
+    "10 Aug 2010 (ODI vs India)",
+    "3 Apr 2018 (T20I vs West Indies)",
+    "23 Jun 2007 (ODI vs Ireland)",
+    "20 Oct 2010 (ODI vs India)",
+    "11 Dec 2012 (Test vs India)",
+    "26 Jan 2016 (T20I vs Australia)",
+    "18 Oct 2015 (ODI vs Zimbabwe)",
+    "25 Aug 2012 (ODI vs Afghanistan)",
+    "19 Dec 2012 (T20I vs New Zealand)",
+    "31 May 2015 (ODI vs Zimbabwe)",
+    "23 Jan 2016 (ODI vs Australia)",
+    "11 Jan 2009 (T20I vs South Africa)",
+    "6 Aug 2006 (ODI vs Zimbabwe)",
+    "31 Aug 2011 (T20I vs India)",
+    "8 Feb 2009 (ODI vs Sri Lanka)",
+    "7 Oct 2018 (Test vs Pakistan)",
+    "22 Dec 2011 (Test vs Australia)",
+    "1 Feb 2013 (ODI vs Australia)",
+    "11 Mar 2011 (ODI vs Ireland)",
+    "24 Apr 2015 (T20I vs Bangladesh)",
+    "28 Sep 2017 (Test vs Bangladesh)",
+    "5 Jul 2014 (T20I vs Australia)",
+    "31 Jan 2019 (ODI vs New Zealand)",
+    "19 Feb 2010 (T20I vs Pakistan)",
+    "5 Jun 2015 (Test vs India)",
+    "15 Jun 2008 (ODI vs England)",
+    "23 Sep 2016 (T20I vs Pakistan)",
+    "23 Mar 2017 (Test vs Australia)",
+    "2 Jul 2017 (ODI vs Zimbabwe)",
+    "1 Sep 2021 (T20I vs Bangladesh)",
+    "1 Jun 2018 (Test vs Pakistan)",
+    "15 Jun 2014 (ODI vs Bangladesh)",
+    "17 Feb 2017 (T20I vs South Africa)",
+    "7 Jan 2021 (ODI vs Bangladesh)",
+    "24 Apr 2015 (T20I vs Pakistan)",
+    "28 Feb 2014 (ODI vs West Indies)",
+    "5 Sep 2004 (ODI vs England)",
+    "21 May 2015 (Test vs New Zealand)",
+    "3 May 2013 (ODI vs Bangladesh)",
+    "1 Aug 2015 (T20I vs Pakistan)",
+    "9 Feb 2007 (ODI vs Zimbabwe)",
+    "22 May 2010 (T20I vs West Indies)",
+    "19 Apr 2009 (ODI vs Scotland)",
+    "14 Mar 2021 (T20I vs England)",
+    "19 Oct 2015 (Test vs West Indies)",
+    "24 Jan 2020 (T20I vs Bangladesh)",
+    "28 Jul 2021 (T20I vs Sri Lanka)",
+  ];
+
+  console.log("EASY LEVEL");
+  console.log(underline("EASY LEVEL"));
+  console.log(resource.join(" || "));
+
+  const numberForHelp = [
+    "   1   ",
+    "   2    ",
+    "      3     ",
+    "      4     ",
+    "    5   ",
+    " 6 ",
+    "    7     ",
+  ];
+  const helpResource = [
+    "Country",
+    "Category",
+    "Batting-hand",
+    "Bowling-hand",
+    "IPL Team",
+    "Age",
+    "Debut Date",
+  ];
+
+  console.log(numberForHelp.join(" || "));
+  console.log(underline(numberForHelp.join(" || ")));
+  console.log(helpResource.join(" || "));
 
   return [
     players[playersIndex],
@@ -383,31 +519,64 @@ function easyLevel(playersIndex) {
     battingHand[playersIndex],
     bowlingHand[playersIndex],
     iplTeams[playersIndex],
+    age[playersIndex],
+    debutDate[playersIndex],
   ];
 }
 
+function indexForHelpResource() {
+  return prompt(
+    " Ask for help : ",
+  );
+}
+
+let helpResourcesIndex;
+
 function askForResources(data) {
   console.log("\n");
-
-  const helpResourcesIndex = prompt(
-    "Take help from any of the above resources \n\n Enter the Number : ",
-  );
+  helpResourcesIndex = indexForHelpResource();
   console.log("\n");
 
   if (helpResourcesIndex === "quit") {
     return "quit";
   }
 
-  if (helpResourcesIndex > data.length - 1) {
+  if (parseInt(helpResourcesIndex) > data.length - 1) {
     console.log("invalid input");
-    askForResources();
+    askForResources(data);
   }
+
   return data[helpResourcesIndex];
 }
 
+const headingOfAskedResource = [];
+const resource = [];
+
+function askedResource(data) {
+  resource.push((askForResources(data) + "").padEnd(50));
+
+  const helpResource = [
+    "Country",
+    "Category",
+    "Batting-hand",
+    "Bowling-hand",
+    "IPL Team",
+    "Age",
+    "Debut Date",
+  ];
+
+  headingOfAskedResource.push(
+    helpResource[helpResourcesIndex - 1].padEnd(50)
+  );
+
+  console.log(headingOfAskedResource.join(" || "));
+  console.log("\n");
+
+  return resource.join(" || ")  ;
+}
+
 function userGuess(data) {
-  const resource = askForResources(data);
-  console.log(resource);
+  console.log(askedResource(data));
   console.log("\n\n");
 
   const userInput = prompt("Guess the player Name : ");
@@ -423,33 +592,34 @@ function userGuess(data) {
   return "Wrong Guess!! \n";
 }
 
-function playerData(playersIndex) {
+function playerDataLevel(playersIndex) {
   const levelInput = prompt("\n\nEnter the level : ");
 
   if (parseInt(levelInput) === 1) {
+    console.clear();
     return easyLevel(playersIndex);
   }
 
   console.log("invalid data");
-  playerData(playersIndex);
+  playerDataLevel(playersIndex);
 }
 
 function playing() {
   const players = easyLevelPlayers();
   const playersIndex = Math.floor(Math.random() * players.length);
 
-  let data = playerData(playersIndex);
-
+  let data = playerDataLevel(playersIndex);
   let guessedInput = userGuess(data);
-  let chances = 1;
+  let chances = 2;
 
   while (guessedInput !== "You Guessed Right 🎉") {
-    console.log("Wrong guess!!");
-
     if (guessedInput === "quit" || chances === 0) {
-      const message = `${players[playersIndex]} is the correct answer but well played 👍 `;
+      const message = `${
+        players[playersIndex]
+      } is the correct answer but well played 👍`;
       return message;
     }
+    console.log(" \nWrong guess!!");
 
     guessedInput = userGuess(data);
     chances--;
@@ -459,6 +629,6 @@ function playing() {
 }
 
 const levels = ["1.Easy Level", "2.Medium Level"];
-console.log(levels.join("\n"));
 
+console.log(levels.join("\n"));
 console.log(playing());
