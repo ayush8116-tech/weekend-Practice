@@ -607,22 +607,24 @@ function playerDataLevel(playersIndex) {
 function playing() {
   const players = easyLevelPlayers();
   const playersIndex = Math.floor(Math.random() * players.length);
-
-  let data = playerDataLevel(playersIndex);
-  let guessedInput = userGuess(data);
   let chances = 2;
+  
+  let data = playerDataLevel(playersIndex);
+  console.log(`\n\nYou have ${chances + 1} Chances to Guess`);
+  let guessedInput = userGuess(data);
 
   while (guessedInput !== "You Guessed Right 🎉") {
     if (guessedInput === "quit" || chances === 0) {
-      const message = `${
+      const message = ` \n\n ${
         players[playersIndex]
       } is the correct answer but well played 👍`;
       return message;
     }
     console.log(" \nWrong guess!!");
-
-    guessedInput = userGuess(data);
     chances--;
+    console.log(`${chances + 1} Chances Remaining`);
+    
+    guessedInput = userGuess(data);
   }
 
   return guessedInput;
