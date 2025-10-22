@@ -177,7 +177,8 @@ function isCardAvailable(cardInDiscardPile, userCards) {
     for (let cardIndex = 0; cardIndex < userCards.length; cardIndex++) {
         if (
             userCards[cardIndex].includes(colour) ||
-            userCards[cardIndex].includes(cardPower)
+            userCards[cardIndex].includes(cardPower) ||
+            discardedCardArray.includes("Wild")
         ) {
             return true;
         }
@@ -214,17 +215,21 @@ function userTurn() {
         console.log(
             `${cardInDiscardPile} is not available in your hand \n draw it`,
         );
-        const askToDraw = prompt("Draw : ");
-        if (askToDraw === "draw") {
+
+        const askToDraw = prompt("Draw (enter any number) : ");
+
+        if (askToDraw < Infinity) {
+            // console.log(deck.length);
             drawnCard = (cardReveal(deck))[0];
+            deck = cardReveal(deck)[1];
         }
 
         console.log(`drawn card is ${drawnCard}`);
 
         if (isCardPlayable(cardInDiscardPile, drawnCard)) {
-            const askToPlay = prompt("PLAY / KEEP");
+            const askToPlay = prompt("1.PLAY / 2.KEEP");
 
-            if (askToPlay === "play") {
+            if (askToPlay === 1) {
                 cardInDiscardPile = drawnCard;
             } else {
                 userCards.push(drawnCard);
@@ -279,16 +284,19 @@ function botTurn() {
             `${cardInDiscardPile} is not available in your hand \n draw it`,
         );
 
-        const askToDraw = prompt("Draw : ");
-        if (askToDraw === "draw") {
+        const askToDraw = prompt("Draw (enter any number) : ");
+        if (askToDraw < Infinity) {
             drawnCard = (cardReveal(deck))[0];
+            deck = (cardReveal(deck))[1];
+            // console.log(deck.length);
         }
+
         console.log(`drawn card is ${drawnCard}`);
 
         if (isCardPlayable(cardInDiscardPile, drawnCard)) {
-            const askToPlay = prompt("PLAY / KEEP");
+            const askToPlay = prompt("1.PLAY / 2.KEEP");
 
-            if (askToPlay === "play") {
+            if (askToPlay === 1) {
                 cardInDiscardPile = drawnCard;
             } else {
                 botCards.push(drawnCard);
@@ -336,30 +344,30 @@ function botTurn() {
 
 function playingGame() {
     let i = 0;
-    while (userCards.length !== 0 || botCards.length !== 0) {
+    while (userCards.length !== 0 && botCards.length !== 0) {
         const remainder = i % 2;
         console.log(remainder);
 
         if (remainder === 0) {
-            console.clear()
-            console.log(`length of deck is ${deck.length}`);
+            console.clear();
             console.log("USER TURN");
-            console.log(userCards);
-            
-            userTurn();
-            
-        } else {
-            console.clear()
             console.log(`length of deck is ${deck.length}`);
+            console.log(userCards);
+
+            userTurn();
+        } else {
+            console.clear();
             console.log("BOT TURN");
+            console.log(`length of deck is ${deck.length}`);
             console.log(botCards);
-            
+
             botTurn();
         }
-
         i = i + 1;
-        console.log(i);
     }
+
+    const result = userCards.length === 0 ? "USER WINS !!" : "BOT WINS !!";
+    console.log(result);
 }
 
 playingGame();
