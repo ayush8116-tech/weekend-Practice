@@ -207,18 +207,54 @@ const cards = cardReveal(deck);
 let cardInDiscardPile = cards[0];
 deck = cards[1];
 
+function isCardDrawn(deck, isDrawTwo, isDrawFour) {
+    const drawnCards = [];
+
+               if(isDrawTwo) {
+                for (let i = 0; i < 2; i++) {
+                    const revealedCardArray = cardReveal(deck);
+                    drawnCards.push(revealedCardArray[0]);
+                    deck = revealedCardArray[1];
+                }
+                
+                return [true, drawnCards];
+               }
+               
+               if(isDrawFour) {
+                for (let i = 0; i < 4; i++) {
+                    const revealedCardArray = cardReveal(deck);
+                    drawnCards.push(revealedCardArray[0]);
+                    deck = revealedCardArray[1];
+                }
+                return [true, drawnCards];
+               }
+
+}
+
+let cardDrawnOrNot = false;
+
 function userTurn() {
     console.log(cardInDiscardPile);
     let drawnCard;
+    const isDrawTwo = cardInDiscardPile.includes("Draw-Two");
+    const isDrawFour = cardInDiscardPile.includes("Draw-Four");
+    const isCardInHand = isCardAvailable(cardInDiscardPile, userCards);
 
-    if (!isCardAvailable(cardInDiscardPile, userCards)) {
-        console.log(
-            `${cardInDiscardPile} is not available in your hand \n draw it`,
-        );
+    if (!isCardInHand || isDrawTwo || isDrawFour) {
+            if(cardDrawnOrNot === false) {
+                const cardDrawnAfterPowerCard = isCardDrawn(deck, isDrawTwo, isDrawFour);
+                userCards = userCards.push(cardDrawnAfterPowerCard[1]);
+                cardDrawnOrNot = cardDrawnAfterPowerCard[0];
+                return;
+            } else {
+                cardDrawnOrNot = false;
+            }
+
+        console.log(`${cardInDiscardPile} is not available in your hand \n draw it`);
 
         const askToDraw = prompt("Draw (enter any number) : ");
 
-        if (askToDraw < Infinity) {
+        if (parseInt(askToDraw) < Infinity) {
             // console.log(deck.length);
             drawnCard = (cardReveal(deck))[0];
             deck = cardReveal(deck)[1];
@@ -229,7 +265,7 @@ function userTurn() {
         if (isCardPlayable(cardInDiscardPile, drawnCard)) {
             const askToPlay = prompt("1.PLAY / 2.KEEP");
 
-            if (askToPlay === 1) {
+            if (parseInt(askToPlay) === 1) {
                 cardInDiscardPile = drawnCard;
             } else {
                 userCards.push(drawnCard);
@@ -241,7 +277,7 @@ function userTurn() {
     } else {
         const askToPlay = prompt("PLAY (enter any number): ");
 
-        if (askToPlay < Infinity) {
+        if (parseInt(askToPlay) < Infinity) {
             const cardsPlayable = [];
 
             for (let i = 0; i < userCards.length; i++) {
@@ -263,7 +299,7 @@ function userTurn() {
             );
             userCards = removingCardsFromDeck(
                 userCards.indexOf(cardsForPlay[cardToPlay - 1]),
-                userCards,
+                userCards
             );
 
             cardInDiscardPile = cardsForPlay[cardToPlay - 1];
@@ -278,14 +314,27 @@ function userTurn() {
 function botTurn() {
     console.log(cardInDiscardPile);
     let drawnCard;
+    const isDrawTwo = cardInDiscardPile.includes("Draw-Two");
+    const isDrawFour = cardInDiscardPile.includes("Draw-Four");
+    const isCardInHand = isCardAvailable(cardInDiscardPile, userCards);
 
-    if (!isCardAvailable(cardInDiscardPile, botCards)) {
+    if (!isCardInHand || isDrawTwo || isDrawFour) {
+           if(cardDrawnOrNot === false) {
+                const cardDrawnAfterPowerCard = isCardDrawn(deck, isDrawTwo, isDrawFour);
+                botCards = botCards.push(cardDrawnAfterPowerCard[1]);
+                cardDrawnOrNot = cardDrawnAfterPowerCard[0];
+                return;
+            } else {
+                cardDrawnOrNot = false;
+            }
+
+
         console.log(
             `${cardInDiscardPile} is not available in your hand \n draw it`,
         );
-
+        
         const askToDraw = prompt("Draw (enter any number) : ");
-        if (askToDraw < Infinity) {
+        if (parseInt(askToDraw) < Infinity) {
             drawnCard = (cardReveal(deck))[0];
             deck = (cardReveal(deck))[1];
             // console.log(deck.length);
@@ -296,7 +345,7 @@ function botTurn() {
         if (isCardPlayable(cardInDiscardPile, drawnCard)) {
             const askToPlay = prompt("1.PLAY / 2.KEEP");
 
-            if (askToPlay === 1) {
+            if (parseInt(askToPlay) === 1) {
                 cardInDiscardPile = drawnCard;
             } else {
                 botCards.push(drawnCard);
@@ -308,7 +357,7 @@ function botTurn() {
     } else {
         const askToPlay = prompt("PLAY (enter any number): ");
 
-        if (askToPlay < Infinity) {
+        if (parseInt(askToPlay) < Infinity) {
             const cardsPlayable = [];
 
             for (let i = 0; i < botCards.length; i++) {
@@ -352,13 +401,15 @@ function playingGame() {
             console.clear();
             console.log("USER TURN");
             console.log(`length of deck is ${deck.length}`);
+            console.log(`bot has ${botCards.length} cards in hand.`);
             console.log(userCards);
-
+            
             userTurn();
         } else {
             console.clear();
             console.log("BOT TURN");
             console.log(`length of deck is ${deck.length}`);
+            console.log(`user has ${userCards.length} cards in hand.`);
             console.log(botCards);
 
             botTurn();
