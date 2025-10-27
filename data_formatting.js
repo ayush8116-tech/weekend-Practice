@@ -44,16 +44,6 @@ function encodedList(data) {
     return convertedDataForList;
 }
 
-function encode(data) {
-    switch(typeof data) {
-        case "string":
-            return encodedString(data);
-        case "number":
-            return encodedInteger(data);
-        case "object":
-            return encodedList(data);
-    }
-}
 
 function isNumber(bencodedString) {
     const bencodedArray = bencodedString.split("");
@@ -64,20 +54,35 @@ function isNumber(bencodedString) {
 
 function isString(bencodedString) {
     const bencodedArray = bencodedString.split("");
-
-    const stringElement = (bencodedArray.slice((bencodedArray.indexOf(":") + 1))).join("")
+    const colonIndex = bencodedArray.indexOf(":");
+    const numberArray = bencodedArray.slice(0, (colonIndex));
+    const stringArray = bencodedArray.slice((colonIndex + 1));
+    const numberElement = numberArray.join("")
+    const stringElement = stringArray.join("")
     const stringLength = stringElement.length;
     
-    return stringLength === parseInt(bencodedArray[0]);
+    return [parseInt(numberElement) === stringLength, stringElement];
+}
+
+function isList(bencodedString) {
+    const bencodedArray = bencodedString.split("");
+    const length = bencodedArray.length;
+    
+    return bencodedArray[0] === "l" && bencodedArray[length - 1] === "e";
 }
 
 function bencodedStringType(bencodedString) {
     if(isNumber(bencodedString)) {
         return "number";
     }
-    if(isString(bencodedString)) {
+    if(isString(bencodedString)[0]) {
         return "string";
     }
+    if(isList(bencodedString)) {
+        return "object";
+    }
+    
+    return "invalid";
 }
 
 function decodedInteger(bencodedString) {
@@ -90,12 +95,47 @@ function decodedInteger(bencodedString) {
     return decodedNumber;
 }
 
-function decodedString(bencodedString) {
-    const bencodedArray = bencodedString.split("");
+function decodedString(bencodedString) {        
+    return isString(bencodedString)[1];
+}
 
-    const stringElement = (bencodedArray.slice((bencodedArray.indexOf(":") + 1))).join("");
+function decodedList(bencodedString) {
+    const bencodedArray = bencodedString.split("");
+    bencodedArray.pop();
+    bencodedArray.shift();
     
-    return stringElement;
+    const decodedListArray = [];
+    let dataToDecode = [];
+    
+    for(let index = 0; index < bencodedArray.length; index++) {
+    dataToDecode.push(bencodedArray[index]);
+    const type = bencodedStringType(dataToDecode.join(""));
+    
+    if(type === "string") {
+        decodedListArray.push(decodedString(dataToDecode.join("")));
+        dataToDecode = [];
+    }
+    if(type === "number") {
+        decodedListArray.push(decodedInteger(dataToDecode.join("")));
+        dataToDecode = [];
+    }
+    if(type === "object") {
+        decodedListArray.push(decodedList(dataToDecode.join("")));
+        dataToDecode = [];
+    }
+}
+return decodedListArray;
+}
+
+function encode(data) {
+    switch(typeof data) {
+        case "string":
+            return encodedString(data);
+        case "number":
+            return encodedInteger(data);
+        case "object":
+            return encodedList(data);
+    }
 }
 
 function decode(bencodedString) {
@@ -106,7 +146,39 @@ function decode(bencodedString) {
         return decodedInteger(bencodedString);
         case "string":
         return decodedString(bencodedString);
+        case "object":
+        return decodedList(bencodedString);
     }
+}
+
+function isArray(array) {
+  return typeof array === 'object';
+}
+
+function areArraysEqual(array1, array2) {
+  if (array1.length !== array2.length) {
+    return false;
+  }
+
+  for (let index = 0; index < array1.length; index++) {
+    if (!areDeepEqual(array1[index], array2[index])) {
+      return false;
+    }
+  }
+
+  return true;
+}
+
+function areDeepEqual(array1, array2) {
+  if (typeof array1 !== typeof array2) {
+    return false;
+  }
+
+  if (isArray(array1) && isArray(array2)) {
+    return areArraysEqual(array1, array2);
+  }
+
+  return array1 === array2;
 }
 
 function encodingTest(data, description, expectedValue){
@@ -123,7 +195,7 @@ function encodingTest(data, description, expectedValue){
 
 function decodingTest(bencodedString, description, expectedValue){
     const actualValue = decode(bencodedString);
-    const symbol = actualValue === expectedValue ? "✅" : "❌";
+    const symbol = actualValue === expectedValue || areDeepEqual(actualValue, expectedValue) ? "✅" : "❌";
     const input = `Input : ${bencodedString}`;
     const output = `Expected Output : ${expectedValue} \n Actual Output : ${actualValue}`;
     const messageForPassedCase = `${symbol} ${description}`;
@@ -134,24 +206,40 @@ function decodingTest(bencodedString, description, expectedValue){
 }
 
 function encodingTestCase() {
-    encodingTest(-42, "negative integer", "i-42e");
-    encodingTest("abc", "regular string", "3:abc");
-    encodingTest("", "empty string", "0:");
-    encodingTest([1,2,3,4], "regular list of numbers", "li1ei2ei3ei4ee");
-    encodingTest(["a","b","c"], "regular list of string", "l1:a1:b1:ce");
-    encodingTest(["a","b",23], "mixed list of number and string", "l1:a1:bi23ee");
-    encodingTest(["a",1,[1,"",["b"]]], "mixed list of number, string, nested list", "l1:ai1eli1e0:l1:beee");
-    encodingTest([1,"Two",["Three",4,["Five"]]], "final test case including all cases", "li1e3:Twol5:Threei4el4:Fiveeee");
+    encodingTest(-42, "encoded negative integer", "i-42e");
+    encodingTest("abc", "encoded regular string", "3:abc");
+    encodingTest("", "encoded empty string", "0:");
+    encodingTest([1,2,3,4], "encoded regular list of numbers", "li1ei2ei3ei4ee");
+    encodingTest(["a","b","c"], "encoded regular list of string", "l1:a1:b1:ce");
+    encodingTest(["a","b",23], "encoded mixed list of number and string", "l1:a1:bi23ee");
+    encodingTest(["a",1,[1,"",["b"]]], "encoded mixed list of number, string, nested list", "l1:ai1eli1e0:l1:beee");
+    encodingTest([1,"Two",["Three",4,["Five"]]], "encoded final test case including all cases", "li1e3:Twol5:Threei4el4:Fiveeee");
 }
 
 function decodingTestCase() {
-    decodingTest("i1e", "positive integer", 1);
-    decodingTest("i-23e", "negative integer", -23);
-    decodingTest("5:hello", "string", "hello");
-    decodingTest("0:", "string", "");
+    decodingTest("i1e", "decoded positive integer", 1);
+    decodingTest("i-23e", "decoded negative integer", -23);
+    decodingTest("5:hello", "decoded string", "hello");
+    decodingTest("0:", "decoded empty string", "");
+    decodingTest("0:", "decoded empty string", "");
+    decodingTest("li254e3:abce", "decoded list", [254, "abc"]);
+    decodingTest("li254e3:abcl1:aee", "decoded nested list", [254, "abc", ["a"]]);
+    decodingTest("li254e3:abcl0:ee", "decoded nested list", [254, "abc", [""]]);
 }
+
+function underline(text) {
+    return "-".repeat(text.length);
+}
+
 function testAll() {
-    // encodingTestCase();
+    console.log("encoding");
+    console.log((underline("encoding")));
+    
+    encodingTestCase();
+
+    console.log("\ndecoding");
+    console.log((underline("decoding")));
+    
     decodingTestCase();
 }
 
