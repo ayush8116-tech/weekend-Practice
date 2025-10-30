@@ -104,33 +104,32 @@ function decodedList(bencodedString) {
     let dataToDecode = [];
     const decodedListArray = [];
     let type;
-    
+
     for(let index = 1; index < bencodedString.length; index++) {
+        
         dataToDecode.push(bencodedString[index]);
-        console.log(dataToDecode);
             
         type = bencodedStringType(dataToDecode.join(""));
-        console.log(type);
-        if(type === "number") {
-            decodedListArray.push(decodedInteger(dataToDecode.join("")));
-            dataToDecode = [];
-        }
-        if (type === "string") {
+    if(type === "number") {
+        decodedListArray.push(decodedInteger(dataToDecode.join("")));
+        dataToDecode = [];
+    }
+    if (type === "string") {
             decodedListArray.push(decodedString(dataToDecode.join("")));
             dataToDecode = [];
         }
-        if (type === "object") {
-            console.log(bencodedString.slice(index));
-            decodedListArray.push(decodedList(bencodedString.slice(index)));
+    if (type === "object") {
+            const nestedList = decodedList(bencodedString.slice(index));
+            index = index + nestedList[1];
+            decodedListArray.push(nestedList[0]);
+            
             dataToDecode = [];
         }
+
         if(dataToDecode[0] === "e") {
-           console.log(decodedListArray);
-        return decodedListArray;
+           return [decodedListArray, index];
        } 
     }
-    
-    return dataToDecode;
 }
 
 function encode(data) {
@@ -153,7 +152,7 @@ function decode(bencodedString) {
         case "string":
         return decodedString(bencodedString);
         case "object":
-        return decodedList(bencodedString);
+        return decodedList(bencodedString)[0];
     }
 }
 
@@ -227,14 +226,12 @@ function decodingTestCase() {
     decodingTest("i-23e", "decoded negative integer", -23);
     decodingTest("5:hello", "decoded string", "hello");
     decodingTest("0:", "decoded empty string", "");
-    decodingTest("0:", "decoded empty string", "");
     decodingTest("li254ee", "decoded list of number", [254]);
     decodingTest("l3:abce", "decoded list of string", ["abc"]);
-    decodingTest("l3:abee", "decoded list of string", ["abe"]);
-    decodingTest("l3:abeli123eee", "decoded list of string", ["abe", [123]]);
-    // decodingTest("li254e3:abcli1eee", "decoded nested list", [254, "abc", [1]]);
-    // decodingTest("li254e3:abcl0:ee", "decoded nested empty list", [254, "abc", [""]]);
-    // decodingTest("li254e3:abcli1eee", "decoded nested list of number", [254, "abc", [1]]);
+    decodingTest("l3:abeli123e3:abcee", "decoded list of nested list of number and string", ["abe", [123,"abc"]]);
+    decodingTest("ll2:abe2:cde", "decoded list of nested list and string", [["ab"],"cd"]);
+    decodingTest("l3:abeli123el3:abcee3:defe", "decoded list of nested list of nested list", ["abe", [123,["abc"]], "def"]);
+    decodingTest("li254e3:abcl0:ee", "decoded nested empty list", [254, "abc", [""]]);
 }
 
 function underline(text) {
