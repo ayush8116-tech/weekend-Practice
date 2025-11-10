@@ -16,7 +16,7 @@
 // Return the difference between the largest and smallest number.
 // 👉 Output: 9 - 1 = 8
 
-const nums = [3, 9, 2, 9, 5, 2, 9, 1, 5, 2];
+const nums = [3, 9, 2, 9, 5, 2, 9, 1, 5, ];
 
 const occurences = (repetitionLogs, value) => {
   const index = repetitionLogs.findIndex(row => row[0] === value);
@@ -34,7 +34,6 @@ const occurences = (repetitionLogs, value) => {
 
 const frequencyTable = nums.reduce(occurences, []);
 // console.log(frequencyTable);
-// [ [ 3, 1 ], [ 9, 3 ], [ 2, 3 ], [ 5, 2 ], [ 1, 1 ] ]
 
 const maxFrequency = frequencyTable.reduce(((max, row) =>{
   // console.log(max);
@@ -42,19 +41,31 @@ const maxFrequency = frequencyTable.reduce(((max, row) =>{
     max = row[1]
     return max;
   }
-
+  
   return max;
 }), frequencyTable[0][1]);
 
 const mostFrequent = frequencyTable.reduce(((frequentElements, row) => {
- if(row[1] === maxFrequency) {
-  frequentElements.push(row[0])
+  if(row[1] === maxFrequency) {
+    frequentElements.push(row[0])
+    return frequentElements;
+  }
+  
   return frequentElements;
- }
-
- return frequentElements;
 }), []);
 
 console.log(mostFrequent);
 
-console.log(maxFrequency);
+// [ [ 3, 1 ], [ 9, 3 ], [ 2, 3 ], [ 5, 2 ], [ 1, 1 ] ]
+
+const repeatMoreThanOnce = frequencyTable.reduce(((atleastTwoOccurence, row) => {
+  if(row[1] > 1) {
+    atleastTwoOccurence.push(row[0])
+    return atleastTwoOccurence;
+  }
+
+  return atleastTwoOccurence;
+}), [])
+
+console.log("data which repeat more than once :",repeatMoreThanOnce.sort((x, y) => x - y));
+
