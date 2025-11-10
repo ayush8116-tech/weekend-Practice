@@ -91,6 +91,14 @@ console.log("sum of unique data :", sumOfData);
 
 console.log("distinct :",distinct);
 
+// Return the difference between the largest and smallest number.
+// 👉 Output: 9 - 1 = 8
+
+const sortedData = distinct.sort((x, y) => x - y);
+
+const difference = sortedData[sortedData.length - 1] - sortedData[0];
+
+console.log("Difference between the largest and smallest number :", difference);
 
 
 
