@@ -81,11 +81,15 @@ console.log("data which repeat more than once :",repeatMoreThanOnce.sort((x, y) 
 // 👉 Output: 1 + 3 = 4
 
 const distinct = frequencyTable.map(row => row[0]);
-// console.log("distinct :",distinct);
 
 const sumOfData = distinct.reduce((sum, number) => sum + number);
 
 console.log("sum of unique data :", sumOfData);
+
+// Return a new array where every duplicate number is removed (keep only first occurrence).
+// 👉 Output: [3, 9, 2, 5, 1]
+
+console.log("distinct :",distinct);
 
 
 
